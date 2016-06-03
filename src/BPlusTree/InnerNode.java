@@ -12,28 +12,20 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 
 	public Split<K, V> insert(K key, V value) {
 		int i = getKeyLocation(key);
-		System.out.println("key: "+i);
-		if(keys.size() < ORDER){
-			Split<K,V> split = children.get(i).insert(key, value);
-			if (split != null){
-				int j = getKeyLocation(split.key);
-				keys.add(j, split.key);
-				children.add(j+1, split.right);
-			}
-			return null;
-		} else {
-			Split<K,V> split = children.get(i).insert(key, value);
-			if (split != null){
-				int j = getKeyLocation(split.key);
-				keys.add(j, split.key);
-				children.add(j+1, split.right);
+		Split<K,V> split = children.get(i).insert(key, value);
+		
+		if (split != null){
+			int j = getKeyLocation(split.key);
+			keys.add(j, split.key);
+			children.add(j+1, split.right);
+			
+			if(needsToBeSplit()){
 				return this.split();
 			}
-			return null;
 		}
+		return null;
 	}
 
-	@Override
 	public Split<K, V> split() {
 		int mid = keys.size()/2;
 		InnerNode<K,V> rightSibling = new InnerNode<K,V>(ORDER);
@@ -49,9 +41,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
 
-	@Override
 	public void dump(String prefix) {
-		// TODO Auto-generated method stub
 		System.out.println(prefix + "Inner Node");
 		for(int i=0; i<children.size(); i++){
 			children.get(i).dump(prefix + " ");
@@ -60,5 +50,13 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			}
 		}
 	}
+
+	/*@Override
+	public Merge<K, V> remove(K key) {
+		int i = getKeyLocation(key);
+		Merge<K,V> merge = children.get(i).remove(key);
+		
+		return null;
+	}*/ //todo
 
 }

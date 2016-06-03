@@ -9,6 +9,15 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		super(order);
 		values = new ArrayList<V>(ORDER);
 	}
+	
+	public int getExactKeyLocation(K key){
+		int i = getKeyLocation(key);
+		if (i>0 && i<=keys.size() && keys.get(i-1).equals(key)){
+			return i-1;
+		} else {
+			return -1;
+		}
+	}
 
 	public Split<K, V> insert(K key, V value) {
 		if(keys.size() == 0){
@@ -17,20 +26,17 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 			return null;
 		} else {
 			int i = getKeyLocation(key);
-			System.out.println("key: "+i);
-			if(keys.size() < ORDER){
-				keys.add(i, key);
-				values.add(i, value);
-				return null;
-			} else {
-				keys.add(i, key);
-				values.add(i, value);
+			keys.add(i, key);
+			values.add(i, value);
+			
+			if(needsToBeSplit()){
 				return this.split();
+			} else {
+				return null;
 			}
 		}
 	}
 
-	@Override
 	public Split<K, V> split() {
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(ORDER);
@@ -43,12 +49,18 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	@Override
 	public void dump(String prefix) {
 		System.out.println(prefix + "Leaf Node ");
 		for(int i=0; i<keys.size(); i++){
 			System.out.println(prefix + values.get(i).toString());
 		}
 	}
+
+	/*@Override
+	public Merge<K, V> remove(K key) {
+		int loc = getExactKeyLocation(key);
+		
+		return null;
+	}*/ //todo
 
 }
