@@ -89,4 +89,8 @@ public class MemoryPage<K extends Comparable<K>, V> {
 				e.printStackTrace();
 			}
 	}
+	public Node<K, V> read(int offset){
+		//TODO ????
+		return null;
+	}
 }
